@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Project Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+  <div class="container mx-auto p-6 space-y-8">
+
+    <!-- Создать проект -->
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-bold mb-4">Создать проект</h2>
+      <form id="createProjectForm" class="space-y-3">
+        <input id="projectName"    type="text"   placeholder="Name"    required class="w-full border px-3 py-2 rounded" />
+        <select id="projectType"    required class="w-full border px-3 py-2 rounded"></select>
+        <input id="projectAuthor"  type="text"   placeholder="Author"  required class="w-full border px-3 py-2 rounded" />
+        <input id="projectTags"    type="text"   placeholder="Tags"           class="w-full border px-3 py-2 rounded" />
+        <input id="projectYear"    type="number" placeholder="Year"           class="w-full border px-3 py-2 rounded" />
+        <button type="submit" class="w-full bg-green-500 text-white py-2 rounded">Создать</button>
+      </form>
+    </section>
+
+    <!-- Типы проектов -->
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-bold mb-4">Типы проектов</h2>
+      <ul id="projectTypeList" class="list-disc list-inside"></ul>
+    </section>
+
+    <!-- Проекты -->
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-bold mb-4">Проекты</h2>
+      <form id="filterProjectsForm" class="grid grid-cols-2 gap-2 mb-4">
+        <input id="filterId"           type="number"         placeholder="ID"            class="border px-2 py-1 rounded"/>
+        <select id="filterType"        class="border px-2 py-1 rounded"></select>
+        <input id="filterName"         type="text"           placeholder="Name"          class="border px-2 py-1 rounded"/>
+        <input id="filterAuthor"       type="text"           placeholder="Author"        class="border px-2 py-1 rounded"/>
+        <input id="filterTags"         type="text"           placeholder="Tags"          class="border px-2 py-1 rounded"/>
+        <input id="filterYear"         type="number"         placeholder="Year"          class="border px-2 py-1 rounded"/>
+        <input id="filterCreatedFrom"  type="datetime-local" placeholder="Created from" class="border px-2 py-1 rounded"/>
+        <input id="filterCreatedTo"    type="datetime-local" placeholder="Created to"   class="border px-2 py-1 rounded"/>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">Применить</button>
+        <button type="button" id="resetFilter" class="border px-4 py-1 rounded">Сбросить</button>
+      </form>
+      <table id="projectsTable" class="w-full table-auto border-collapse border">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="border px-2 py-1">ID</th>
+            <th class="border px-2 py-1">Name</th>
+            <th class="border px-2 py-1">Type</th>
+            <th class="border px-2 py-1">Author</th>
+            <th class="border px-2 py-1">Tags</th>
+            <th class="border px-2 py-1">Year</th>
+            <th class="border px-2 py-1">Created At</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Загрузка файлов -->
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-bold mb-4">Загрузка файлов</h2>
+      <form id="uploadFilesForm" enctype="multipart/form-data" class="space-y-3">
+        <select id="uploadProjectSelect" required class="w-full border px-3 py-2 rounded">
+          <option value="">— Выберите проект —</option>
+        </select>
+        <input id="fileInput" type="file" multiple required class="w-full" />
+        <button type="submit" class="w-full bg-indigo-500 text-white py-2 rounded">Загрузить</button>
+      </form>
+      <ul id="uploadedFilesList" class="list-disc list-inside mt-3"></ul>
+    </section>
+
+    <!-- Файлы -->
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-bold mb-4">Файлы</h2>
+      <form id="filterFilesForm" class="flex space-x-2 mb-4">
+        <input id="filterFileId"     type="number" placeholder="File ID"    class="border px-2 py-1 rounded"/>
+        <input id="filterFileProjId" type="number" placeholder="Project ID" class="border px-2 py-1 rounded"/>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded">Применить</button>
+        <button type="button" id="resetFileFilter" class="border px-4 py-1 rounded">Сбросить</button>
+      </form>
+      <table id="filesTable" class="w-full table-auto border-collapse border">
+        <thead class="bg-gray-200">
+          <tr>
+            <th data-sort="id" class="border px-2 py-1 cursor-pointer">ID ⬍</th>
+            <th class="border px-2 py-1">Name</th>
+            <th class="border px-2 py-1">Project ID</th>
+            <th class="border px-2 py-1">Created At</th>
+            <th class="border px-2 py-1">Download</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Литература -->
+    <section class="bg-white p-6 rounded shadow">
+      <h2 class="text-xl font-bold mb-4">Литература</h2>
+      <form id="createSourceForm" class="space-y-3 mb-6">
+        <select id="sourceTypeSelect" required class="w-full border px-3 py-2 rounded">
+          <option value="">— Выберите тип литературы —</option>
+        </select>
+        <input id="sourceTitle"       type="text"   placeholder="Title"        required class="w-full border px-3 py-2 rounded" />
+        <input id="sourceAuthors"     type="text"   placeholder="Authors"      required class="w-full border px-3 py-2 rounded" />
+        <input id="sourcePublishedIn" type="text"   placeholder="Published in" class="w-full border px-3 py-2 rounded" />
+        <input id="sourceYear"        type="number" placeholder="Year"         class="w-full border px-3 py-2 rounded" />
+        <input id="sourcePages"       type="number" placeholder="Pages"        class="w-full border px-3 py-2 rounded" />
+        <textarea id="sourceText1"    placeholder="Text type 1" class="w-full border px-3 py-2 rounded"></textarea>
+        <textarea id="sourceText2"    placeholder="Text type 2" class="w-full border px-3 py-2 rounded"></textarea>
+        <textarea id="sourceText3"    placeholder="Text type 3" class="w-full border px-3 py-2 rounded"></textarea>
+        <button type="submit" class="w-full bg-yellow-500 text-white py-2 rounded">Добавить литературу</button>
+      </form>
+      <form id="filterLiteratureForm" class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+        <input id="filterLitId"            type="number" placeholder="ID"                class="border px-2 py-1 rounded"/>
+        <select id="filterLitType"         class="border px-2 py-1 rounded"></select>
+        <input id="filterLitTitle"         type="text"   placeholder="Title"             class="border px-2 py-1 rounded"/>
+        <input id="filterLitAuthors"       type="text"   placeholder="Authors"           class="border px-2 py-1 rounded"/>
+        <input id="filterLitPublishedIn"   type="text"   placeholder="Published in"     class="border px-2 py-1 rounded"/>
+        <input id="filterLitYear"          type="number" placeholder="Year"              class="border px-2 py-1 rounded"/>
+        <input id="filterLitPages"         type="number" placeholder="Pages"             class="border px-2 py-1 rounded"/>
+        <input id="filterLitText1"         type="text"   placeholder="Text type 1"       class="border px-2 py-1 rounded"/>
+        <input id="filterLitText2"         type="text"   placeholder="Text type 2"       class="border px-2 py-1 rounded"/>
+        <input id="filterLitText3"         type="text"   placeholder="Text type 3"       class="border px-2 py-1 rounded"/>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-1 rounded col-span-full md:col-span-2">Применить</button>
+        <button type="button" id="resetLiteratureFilter" class="border px-4 py-1 rounded col-span-full md:col-span-2">Сбросить</button>
+      </form>
+      <table id="literatureTable" class="w-full table-auto border-collapse border">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="border px-2 py-1">ID</th>
+            <th class="border px-2 py-1">Type</th>
+            <th class="border px-2 py-1">Title</th>
+            <th class="border px-2 py-1">Authors</th>
+            <th class="border px-2 py-1">Published In</th>
+            <th class="border px-2 py-1">Year</th>
+            <th class="border px-2 py-1">Pages</th>
+            <th class="border px-2 py-1">Text1</th>
+            <th class="border px-2 py-1">Text2</th>
+            <th class="border px-2 py-1">Text3</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const api = async (path, opts) => {
+      const r = await fetch(path, opts);
+      if (!r.ok) throw new Error(await r.text());
+      return r.json();
+    };
+    const populateSelect = (el, items, { blankText } = { blankText: '— Select —' }) => {
+      el.innerHTML = `<option value="">${blankText}</option>`;
+      items.forEach(x => {
+        const o = document.createElement('option');
+        o.value = x.id;
+        o.textContent = `${x.id} – ${x.name || x.title}`;
+        el.appendChild(o);
+      });
+    };
+
+    // элементы
+    const projectTypeSelect   = document.getElementById('projectType');
+    const filterTypeSelect    = document.getElementById('filterType');
+    const uploadProjectSelect = document.getElementById('uploadProjectSelect');
+    const projectTypeList     = document.getElementById('projectTypeList');
+    const projectsTbody       = document.querySelector('#projectsTable tbody');
+    const filesTbody          = document.querySelector('#filesTable tbody');
+    const litTbody            = document.querySelector('#literatureTable tbody');
+
+    const createProjectForm   = document.getElementById('createProjectForm');
+    const filterProjectsForm  = document.getElementById('filterProjectsForm');
+    const resetFilterBtn      = document.getElementById('resetFilter');
+
+    const uploadFilesForm     = document.getElementById('uploadFilesForm');
+    const fileInput           = document.getElementById('fileInput');
+    const uploadedFilesList   = document.getElementById('uploadedFilesList');
+    const filterFilesForm     = document.getElementById('filterFilesForm');
+    const resetFileFilterBtn  = document.getElementById('resetFileFilter');
+
+    const createSourceForm    = document.getElementById('createSourceForm');
+    const sourceTypeSelect    = document.getElementById('sourceTypeSelect');
+    const filterLitForm       = document.getElementById('filterLiteratureForm');
+    const filterLitTypeSelect = document.getElementById('filterLitType');
+    const resetLitFilterBtn   = document.getElementById('resetLiteratureFilter');
+
+    let PROJECT_TYPES = [], PROJECTS = [], LIT_TYPES = [], fileSortAsc = true;
+
+    // 1) Типы проектов
+    async function loadTypes() {
+      PROJECT_TYPES = await api('/api/projects/types');
+      populateSelect(projectTypeSelect, PROJECT_TYPES, { blankText: '— Тип проекта —' });
+      populateSelect(filterTypeSelect,  PROJECT_TYPES, { blankText: 'Все типы'     });
+      projectTypeList.innerHTML = PROJECT_TYPES.map(t => `<li>${t.id}: ${t.name}</li>`).join('');
+    }
+
+    // 2) Проекты + заполнение селекта при загрузке файлов
+    async function loadProjects(params = {}) {
+      Object.keys(params).forEach(k => params[k] === '' && delete params[k]);
+      const qs = new URLSearchParams(params).toString();
+      PROJECTS = await api(`/api/projects/${qs ? '?' + qs : ''}`);
+      projectsTbody.innerHTML = PROJECTS.map(p => `
+        <tr>
+          <td class="border px-2 py-1">${p.id}</td>
+          <td class="border px-2 py-1">${p.name}</td>
+          <td class="border px-2 py-1">${p.project_type?.name}</td>
+          <td class="border px-2 py-1">${p.author}</td>
+          <td class="border px-2 py-1">${p.tags||''}</td>
+          <td class="border px-2 py-1">${p.year||''}</td>
+          <td class="border px-2 py-1">${new Date(p.created_at).toLocaleString()}</td>
+        </tr>
+      `).join('');
+      populateSelect(uploadProjectSelect, PROJECTS, { blankText: '— Выберите проект —' });
+    }
+
+    // 3) Типы литературы
+    async function loadLitTypes() {
+      LIT_TYPES = await api('/api/literature/types');
+      populateSelect(filterLitTypeSelect, LIT_TYPES, { blankText: 'Все типы' });
+      populateSelect(sourceTypeSelect,    LIT_TYPES, { blankText: '— Тип литературы —' });
+    }
+
+    // 4) Литература
+    async function loadLiterature(params = {}) {
+      Object.keys(params).forEach(k => params[k] === '' && delete params[k]);
+      const qs   = new URLSearchParams(params).toString();
+      const data = await api(`/api/literature/sources/${qs ? '?' + qs : ''}`);
+      litTbody.innerHTML = data.map(s => {
+        const tn = (LIT_TYPES.find(t => t.id === s.type_id) || {}).name || s.type_id;
+        return `
+          <tr>
+            <td class="border px-2 py-1">${s.id}</td>
+            <td class="border px-2 py-1">${tn}</td>
+            <td class="border px-2 py-1">${s.title}</td>
+            <td class="border px-2 py-1">${s.authors}</td>
+            <td class="border px-2 py-1">${s.published_in||''}</td>
+            <td class="border px-2 py-1">${s.year||''}</td>
+            <td class="border px-2 py-1">${s.pages||''}</td>
+            <td class="border px-2 py-1">${s.text_type_1||''}</td>
+            <td class="border px-2 py-1">${s.text_type_2||''}</td>
+            <td class="border px-2 py-1">${s.text_type_3||''}</td>
+          </tr>`;
+      }).join('');
+    }
+
+    // 5) Файлы
+    async function loadFiles(params = {}) {
+      Object.keys(params).forEach(k => params[k] === '' && delete params[k]);
+      const qs   = new URLSearchParams(params).toString();
+      const data = await api(`/api/files/${qs ? '?' + qs : ''}`);
+      filesTbody.innerHTML = data.map(f => {
+        const parts = f.path.replace(/\\/g,'/').split('/');
+        const pid   = parts[2] || '';
+        return `
+          <tr>
+            <td class="border px-2 py-1">${f.id}</td>
+            <td class="border px-2 py-1">${f.name}</td>
+            <td class="border px-2 py-1">${pid}</td>
+            <td class="border px-2 py-1">${new Date(f.created_at).toLocaleString()}</td>
+            <td class="border px-2 py-1">
+              <a href="/api/files/download/${f.id}" download class="text-blue-600 underline">Download</a>
+            </td>
+          </tr>`;
+      }).join('');
+    }
+
+    // сортировка файлов по ID
+    document.querySelector('#filesTable th[data-sort="id"]')
+      .addEventListener('click', () => {
+        fileSortAsc = !fileSortAsc;
+        const rows = Array.from(filesTbody.children);
+        rows.sort((a, b) => {
+          const ai = +a.children[0].textContent, bi = +b.children[0].textContent;
+          return fileSortAsc ? ai - bi : bi - ai;
+        });
+        filesTbody.innerHTML = '';
+        rows.forEach(r => filesTbody.appendChild(r));
+      });
+
+    // инициализация
+    await loadTypes();
+    await loadProjects();
+    await loadLitTypes();
+    await loadLiterature();
+    await loadFiles();
+
+    // === Обработчики форм ===
+
+    createProjectForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      await api('/api/projects/', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({
+          name:    projectName.value,
+          type_id: +projectTypeSelect.value,
+          author:  projectAuthor.value,
+          tags:    projectTags.value||undefined,
+          year:    +projectYear.value||undefined
+        })
+      });
+      createProjectForm.reset();
+      await loadProjects();
+    });
+
+    filterProjectsForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      await loadProjects({
+        id:           filterId.value,
+        type_id:      filterTypeSelect.value,
+        name:         filterName.value,
+        author:       filterAuthor.value,
+        tags:         filterTags.value,
+        year:         filterYear.value,
+        created_from: filterCreatedFrom.value,
+        created_to:   filterCreatedTo.value
+      });
+    });
+    resetFilterBtn.addEventListener('click', async () => {
+      filterProjectsForm.reset();
+      await loadProjects();
+    });
+
+    uploadFilesForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const fd = new FormData();
+      for (let f of fileInput.files) fd.append('files', f);
+      await fetch(
+        `/api/files/upload?project_id=${uploadProjectSelect.value}`,
+        { method:'POST', body: fd }
+      );
+      uploadFilesForm.reset();
+      await loadFiles({ project_id: uploadProjectSelect.value });
+    });
+
+    filterFilesForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      await loadFiles({
+        id:         filterFileId.value,
+        project_id: filterFileProjId.value
+      });
+    });
+    resetFileFilterBtn.addEventListener('click', async () => {
+      filterFilesForm.reset();
+      await loadFiles();
+    });
+
+    createSourceForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const payload = {
+        type_id: +sourceTypeSelect.value,
+        title:   sourceTitle.value,
+        authors: sourceAuthors.value
+      };
+      if (sourcePublishedIn.value.trim()) payload.published_in = sourcePublishedIn.value;
+      if (sourceYear.value)    payload.year        = +sourceYear.value;
+      if (sourcePages.value)   payload.pages       = +sourcePages.value;
+      if (sourceText1.value.trim()) payload.text_type_1 = sourceText1.value.trim();
+      if (sourceText2.value.trim()) payload.text_type_2 = sourceText2.value.trim();
+      if (sourceText3.value.trim()) payload.text_type_3 = sourceText3.value.trim();
+
+      await api('/api/literature/sources/', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      createSourceForm.reset();
+      await loadLiterature();
+    });
+
+    filterLitForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      await loadLiterature({
+        id:            filterLitId.value,
+        type_id:       filterLitTypeSelect.value,
+        title:         filterLitTitle.value,
+        authors:       filterLitAuthors.value,
+        published_in:  filterLitPublishedIn.value,
+        year:          filterLitYear.value,
+        pages:         filterLitPages.value,
+        text_type_1:   filterLitText1.value,
+        text_type_2:   filterLitText2.value,
+        text_type_3:   filterLitText3.value
+      });
+    });
+    resetLitFilterBtn.addEventListener('click', async () => {
+      filterLitForm.reset();
+      await loadLiterature();
+    });
+
+  });
+  </script>
+</body>
+</html>
